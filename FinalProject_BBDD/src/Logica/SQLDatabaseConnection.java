@@ -15,9 +15,9 @@ public class SQLDatabaseConnection {
     public static void main(String[] args) {
  
        // InsertarAsignatura("ITT347T", "Redes Telematicas I", 4, 3, 1);
-    	  InsertarEstudiante("20170843", "Jose", "Rafael", "Almonte", null, "ITT", "Contado", "DOM", null);
-    
-    }
+      //  InsertarEstudiante("20170843", "Jose", "Rafael", "Almonte", null, "ITT", "Contado", "DOM", null);
+    	  InsertarGrupo("202020212", "ITT328T", "001", 25, null); 
+    	  }
 
 
 public static void InsertarAsignatura (String codigoAsig, String nombreAsig, int creditosAsig, int horasT, int horasP) {
@@ -160,7 +160,60 @@ public static void InsertarEstudiante (String Matricula, String Nombre1, String 
     }
 	 }
 
+public static void InsertarGrupo (String perAcad, String codAsig, String numGrupo 
+		 ,int cupoGrupo, String horario) {
+			
+			String perAcad_ = perAcad;
+			String codAsig_ = codAsig;
+			String numGrupo_ = numGrupo; 
+			int    cupoGrupo_ = cupoGrupo;
+			String Horario_ = horario; 
+			
+			
+			Connection conn = null;
+			 
+		    try {
 
+		        String dbURL = "jdbc:sqlserver://MUÑOZV";
+		        String user = "Brayan";
+		        String pass = "12345";
+		        conn = DriverManager.getConnection(dbURL, user, pass);
+		        if (conn != null) {
+		            System.out.println("Conexion establecida ");
+		        			      }
+
+		        try (Statement stmt = conn.createStatement()) {
+		        	
+		       
+		            String sqlQuery = " INSERT INTO Grupo (CodPeriodoAcad,[Cod Asignatura ],NumGrupo,CupoGrupo,Horario)"
+		                    + " VALUES(?, ?, ?, ?, ?)";
+		            PreparedStatement prepStmt = conn.prepareStatement(sqlQuery);
+		            prepStmt.setString(1, perAcad_); 
+		            prepStmt.setString(2, codAsig_);
+		            prepStmt.setString(3, numGrupo_); 
+		            prepStmt.setInt(4, cupoGrupo_);
+		            prepStmt.setString(5, Horario_); 
+		           
+		        
+		            prepStmt.executeUpdate();
+		            prepStmt.close();
+		        	
+		        } catch (SQLException e) {
+		          e.printStackTrace();
+		        }        
+
+		    } catch (SQLException ex) {
+		        ex.printStackTrace();
+		    } finally {
+		        try {
+		            if (conn != null && !conn.isClosed()) {
+		                conn.close();
+		            }
+		        } catch (SQLException ex) {
+		            ex.printStackTrace();
+		        }
+		    }
+			 }
 
 
 
