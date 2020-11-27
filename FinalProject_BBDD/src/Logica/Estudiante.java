@@ -1,5 +1,11 @@
 package Logica;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 public class Estudiante {
 
 	private String matricula;
@@ -98,5 +104,74 @@ public class Estudiante {
 		this.direccion = direccion;
 	}
 	
-	
+	public static void InsertarEstudiante (
+			String Matricula,
+			String Nombre1,
+			String Nombre2,
+			String Apellido1,
+			String Apellido2,
+			String Carrera,
+			String CatPago,
+			String Nacionalidad,
+			String Direccion) {
+		
+					String Matricula_ = Matricula;
+					String Nombre1_ = Nombre1;
+					String Nombre2_ = Nombre2; 
+					String Apellido1_ = Apellido1;
+					String Apellido2_ = Apellido2; 
+					String Carrera_ = Carrera; 
+					String CatPago_ = CatPago; 
+					String Nacionalidad_ = Nacionalidad;
+					String Direccion_ = Direccion;
+		
+		
+		Connection conn = null;
+		 
+	    try {
+
+	        String dbURL = "jdbc:sqlserver://MUÑOZV";
+	        String user = "Brayan";
+	        String pass = "12345";
+	        conn = DriverManager.getConnection(dbURL, user, pass);
+	        if (conn != null) {
+	            System.out.println("Conexion establecida ");
+	        			      }
+
+	        try (Statement stmt = conn.createStatement()) {
+	        	
+	       
+	            String sqlQuery = " INSERT INTO Estudiante (Matricula,Nombre1,Nombre2,Apellido1,Apellido2,Carrera,CategoriaPago,Nacionalidad,Direccion)"
+	                    + " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	            PreparedStatement prepStmt = conn.prepareStatement(sqlQuery);
+	            prepStmt.setString(1, Matricula_); 
+	            prepStmt.setString(2, Nombre1_);
+	            prepStmt.setString(3, Nombre2_); 
+	            prepStmt.setString(4, Apellido1_);
+	            prepStmt.setString(5, Apellido2_); 
+	            prepStmt.setString(6, Carrera_);
+	            prepStmt.setString(7, CatPago_); 
+	            prepStmt.setString(8, Nacionalidad_);
+	            prepStmt.setString(9, Direccion_); 
+	           
+	        
+	            prepStmt.executeUpdate();
+	            prepStmt.close();
+	        	
+	        } catch (SQLException e) {
+	          e.printStackTrace();
+	        }        
+
+	    } catch (SQLException ex) {
+	        ex.printStackTrace();
+	    } finally {
+	        try {
+	            if (conn != null && !conn.isClosed()) {
+	                conn.close();
+	            }
+	        } catch (SQLException ex) {
+	            ex.printStackTrace();
+	        }
+	    }
+		 }
 }

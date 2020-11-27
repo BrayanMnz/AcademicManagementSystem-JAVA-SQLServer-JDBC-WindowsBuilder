@@ -22,7 +22,7 @@ public class SQLDatabaseConnection {
        //UpdateAsignatura("ISC484T", "Bases de Datos", 3, 3, 0);
        //DeleteAsignatura("ITT348T");
        //DeleteGrupo("202020211", "ISC484T", "001");
-      // DeleteEstudiante("20170843");
+       // DeleteEstudiante("20170771");
       // InsertarGrupoHorario("202020212", "ITT328T", "001", 3, java.sql.Time.valueOf("18:00:00"),java.sql.Time.valueOf("20:00:00")); 
       // UpdateGrupoHorario("202020211", "ITT338T", "001", 5, java.sql.Time.valueOf("14:00:00"),java.sql.Time.valueOf("16:00:00"));
       // DeleteGrupoHorario("202020212", "ITT328T", "001");
