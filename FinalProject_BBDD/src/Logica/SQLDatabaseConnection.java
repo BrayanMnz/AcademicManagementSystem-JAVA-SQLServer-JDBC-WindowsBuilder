@@ -22,7 +22,10 @@ public class SQLDatabaseConnection {
        //UpdateAsignatura("ISC484T", "Bases de Datos", 3, 3, 0);
        //DeleteAsignatura("ITT348T");
        //DeleteGrupo("202020211", "ISC484T", "001");
-    	
+      // DeleteEstudiante("20170843");
+      // InsertarGrupoHorario("202020212", "ITT328T", "001", 3, java.sql.Time.valueOf("18:00:00"),java.sql.Time.valueOf("20:00:00")); 
+      // UpdateGrupoHorario("202020211", "ITT338T", "001", 5, java.sql.Time.valueOf("14:00:00"),java.sql.Time.valueOf("16:00:00"));
+      // DeleteGrupoHorario("202020212", "ITT328T", "001");
     }
 
 
@@ -239,7 +242,71 @@ public static void InsertarGrupo (
 		        }
 		    }
 			 }
+//=================================================================================================
 
+public static void InsertarGrupoHorario (
+		String perAcad,
+		String codAsig,
+		String numGrupo,
+		int dia,
+		java.sql.Time horaInicial,
+		java.sql.Time horaFinal)     
+		{
+			
+				String perAcad_ = perAcad;
+				String codAsig_ = codAsig;
+				String numGrupo_ = numGrupo;
+				int dia_ = dia;
+				java.sql.Time hrInicial = horaInicial;
+				java.sql.Time hrFinal = horaFinal;
+								
+			
+			Connection conn = null;
+			 
+		    try {
+
+		        String dbURL = "jdbc:sqlserver://MUÑOZV";
+		        String user = "Brayan";
+		        String pass = "12345";
+		        conn = DriverManager.getConnection(dbURL, user, pass);
+		        if (conn != null) {
+		            System.out.println("Conexion establecida ");
+		        			      }
+
+		        try (Statement stmt = conn.createStatement()) {
+		        	
+		       
+		            String sqlQuery = " INSERT INTO GrupoHorario (CodPeriodoAcad,CodAsignatura,NumGrupo,Dia,HoraInicial, HoraFinal)"
+		                    + " VALUES(?, ?, ?, ?, ?, ?)";
+		            PreparedStatement prepStmt = conn.prepareStatement(sqlQuery);
+		            prepStmt.setString(1, perAcad_); 
+		            prepStmt.setString(2, codAsig_);
+		            prepStmt.setString(3, numGrupo_); 
+		            prepStmt.setInt(4, dia_);
+		            prepStmt.setTime(5, hrInicial); 
+		            prepStmt.setTime(6, hrFinal); 
+			           
+		        
+		            prepStmt.executeUpdate();
+		            prepStmt.close();
+		        	
+		        } catch (SQLException e) {
+		          e.printStackTrace();
+		        }        
+
+		    } catch (SQLException ex) {
+		        ex.printStackTrace();
+		    } finally {
+		        try {
+		            if (conn != null && !conn.isClosed()) {
+		                conn.close();
+		            }
+		        } catch (SQLException ex) {
+		            ex.printStackTrace();
+		        }
+		    }
+			 }
+//=================================================================================================
 
 public static void UpdateGrupo (
 		String PKperAcad,
@@ -434,7 +501,71 @@ public static void UpdateAsignatura (
 		    }
 			 }
 
+//=================================================================================================
+public static void UpdateGrupoHorario (
+		String perAcad,
+		String codAsig,
+		String numGrupo,
+		int dia,
+		java.sql.Time horaInicial,
+		java.sql.Time horaFinal) 
+		{
+			
+			String perAcad_ = perAcad;
+			String codAsig_ = codAsig;
+			String numGrupo_ = numGrupo;
+			int dia_ = dia;
+			java.sql.Time hrInicial = horaInicial;
+			java.sql.Time hrFinal = horaFinal;
+							
+			
+			Connection conn = null;
+			 
+		    try {
 
+		        String dbURL = "jdbc:sqlserver://MUÑOZV";
+		        String user = "Brayan";
+		        String pass = "12345";
+		        conn = DriverManager.getConnection(dbURL, user, pass);
+		        if (conn != null) {
+		            System.out.println("Conexion establecida ");
+		        			      }
+
+		        try (Statement stmt = conn.createStatement()) {
+		        	
+
+		            PreparedStatement prepStmt = conn.prepareStatement(
+		            		"UPDATE GrupoHorario SET dia = ?,HoraInicial = ?, HoraFinal = ? WHERE  CodPeriodoAcad = ? AND CodAsignatura= ? AND NumGrupo = ?");
+
+		            prepStmt.setString(4, perAcad_); 
+		            prepStmt.setString(5, codAsig_);
+		            prepStmt.setString(6, numGrupo_); 
+		            prepStmt.setInt(1, dia_);
+		            prepStmt.setTime(2, hrInicial); 
+		            prepStmt.setTime(3, hrFinal); 
+		            
+		            
+		            prepStmt.executeUpdate();
+		            prepStmt.close();
+		            
+		        } catch (SQLException e) {
+		          e.printStackTrace();
+		        }        
+
+		    } catch (SQLException ex) {
+		        ex.printStackTrace();
+		    } finally {
+		        try {
+		            if (conn != null && !conn.isClosed()) {
+		                conn.close();
+		            }
+		        } catch (SQLException ex) {
+		            ex.printStackTrace();
+		        }
+		    }
+			 }
+
+//=================================================================================================
 		public static void DeleteAsignatura (String cod_Asignatura) {
 		
 		String asignatura_Cod = cod_Asignatura;
@@ -490,7 +621,60 @@ public static void UpdateAsignatura (
 						  e.printStackTrace();
 						}
 																		 }		
-		
-
+		public static void DeleteEstudiante (String PK_Matricula) {
+			
+			String matricula = PK_Matricula;
+			
+			
+				  String dbURL = "jdbc:sqlserver://MUÑOZV";
+			      String user = "Brayan";
+			      String pass = "12345";
+			      
+			      
+			      String sql = "DELETE FROM Estudiante WHERE Matricula = ?";
+			
+			      try (Connection conn = DriverManager.getConnection(dbURL, user, pass); 
+			    		  PreparedStatement stmt = conn.prepareStatement(sql)) {
+			  
+						stmt.setString(1, matricula);
+						stmt.executeUpdate();
+			  
+						System.out.println("Se elimino correctamente!! ");
+						} catch (SQLException e) {
+						  e.printStackTrace();
+						}
+																		 }
+//=================================================================================================
+		public static void DeleteGrupoHorario (String PKperAcad,
+				String PKcodAsig, 
+				String PKnumGrupo) {
+			
+			String perAcad = PKperAcad;
+			String codAsig = PKcodAsig; 
+			String numGrupo = PKnumGrupo;
+			
+			
+				  String dbURL = "jdbc:sqlserver://MUÑOZV";
+			      String user = "Brayan";
+			      String pass = "12345";
+			      
+			      
+			      String sql = "DELETE FROM GrupoHorario WHERE CodAsignatura = ? AND CodPeriodoAcad = ? AND NumGrupo = ?";
+			
+			      try (Connection conn = DriverManager.getConnection(dbURL, user, pass); 
+			    		  PreparedStatement stmt = conn.prepareStatement(sql)) {
+			  
+						stmt.setString(1, codAsig);
+						stmt.setString(2, perAcad);
+						stmt.setString(3, numGrupo);
+				
+						stmt.executeUpdate();
+			  
+						System.out.println("Se elimino correctamente!! ");
+						} catch (SQLException e) {
+						  e.printStackTrace();
+						} 
+		}
+//=================================================================================================		
 
 }
