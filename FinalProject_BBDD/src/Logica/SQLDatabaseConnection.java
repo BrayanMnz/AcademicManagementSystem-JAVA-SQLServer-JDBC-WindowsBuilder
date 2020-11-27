@@ -589,8 +589,9 @@ public static void UpdateGrupoHorario (
 					} catch (SQLException e) {
 					  e.printStackTrace();
 					}
-																	 }
+																	}
 
+//=================================================================================================
 		public static void DeleteGrupo (String PKperAcad,
 				String PKcodAsig, 
 				String PKnumGrupo) {
