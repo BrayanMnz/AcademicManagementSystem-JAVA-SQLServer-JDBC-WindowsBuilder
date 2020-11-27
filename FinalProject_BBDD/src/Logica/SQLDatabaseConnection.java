@@ -21,7 +21,8 @@ public class SQLDatabaseConnection {
        // UpdateEstudiante("20170843", "Jose", "R.", "Almonte", "Cabrera", "ITT", "Credito", "DOM", null);
        //UpdateAsignatura("ISC484T", "Bases de Datos", 3, 3, 0);
        //DeleteAsignatura("ITT348T");
-    	DeleteGrupo("202020211", "ISC484T", "001");
+       //DeleteGrupo("202020211", "ISC484T", "001");
+    	
     }
 
 
