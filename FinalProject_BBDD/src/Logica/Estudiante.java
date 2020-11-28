@@ -103,7 +103,7 @@ public class Estudiante {
 	public void setDireccion(String direccion) {
 		this.direccion = direccion;
 	}
-	
+//============================================================================	
 	public static void InsertarEstudiante (
 			String Matricula,
 			String Nombre1,
@@ -174,4 +174,103 @@ public class Estudiante {
 	        }
 	    }
 		 }
+//============================================================================	
+	public static void UpdateEstudiante (
+			String Matricula,
+			String Nombre1,
+			String Nombre2,
+			String Apellido1,
+			String Apellido2,
+			String Carrera,
+			String CatPago,
+			String Nacionalidad,
+			String Direccion) 
+			{
+					String Matricula_ = Matricula;
+					String Nombre1_ = Nombre1;
+					String Nombre2_ = Nombre2; 
+					String Apellido1_ = Apellido1;
+					String Apellido2_ = Apellido2; 
+					String Carrera_ = Carrera; 
+					String CatPago_ = CatPago; 
+					String Nacionalidad_ = Nacionalidad;
+					String Direccion_ = Direccion;
+					
+					
+				Connection conn = null;
+				 
+			    try {
+
+			        String dbURL = "jdbc:sqlserver://MUÑOZV";
+			        String user = "Brayan";
+			        String pass = "12345";
+			        conn = DriverManager.getConnection(dbURL, user, pass);
+			        if (conn != null) {
+			            System.out.println("Conexion establecida ");
+			        			      }
+
+			        try (Statement stmt = conn.createStatement()) {
+			        	
+
+			            PreparedStatement ps = conn.prepareStatement(
+			            		"UPDATE Estudiante SET Nombre1 = ?,Nombre2 = ?,Apellido1 = ?,"
+			            		+ "Apellido2 = ?,Carrera = ?,CategoriaPago = ?,Nacionalidad = ?,"
+			            		+ "Direccion = ? WHERE  Matricula = ? ");
+
+			            ps.setString(1, Nombre1_);
+			            ps.setString(2, Nombre2_);
+			            ps.setString(3, Apellido1_);
+			            ps.setString(4, Apellido2_);
+			            ps.setString(5, Carrera_);
+			            ps.setString(6, CatPago_);
+			            ps.setString(7, Nacionalidad_);
+			            ps.setString(8, Direccion_);
+			            ps.setString(9, Matricula_);
+
+
+			            ps.executeUpdate();
+			            ps.close();
+			            
+			        } catch (SQLException e) {
+			          e.printStackTrace();
+			        }        
+
+			    } catch (SQLException ex) {
+			        ex.printStackTrace();
+			    } finally {
+			        try {
+			            if (conn != null && !conn.isClosed()) {
+			                conn.close();
+			            }
+			        } catch (SQLException ex) {
+			            ex.printStackTrace();
+			        }
+			    }
+				 }
+//============================================================================		
+			public static void DeleteEstudiante (String PK_Matricula) {
+				
+				String matricula = PK_Matricula;
+				
+				
+					  String dbURL = "jdbc:sqlserver://MUÑOZV";
+				      String user = "Brayan";
+				      String pass = "12345";
+				      
+				      
+				      String sql = "DELETE FROM Estudiante WHERE Matricula = ?";
+				
+				      try (Connection conn = DriverManager.getConnection(dbURL, user, pass); 
+				    		  PreparedStatement stmt = conn.prepareStatement(sql)) {
+				  
+							stmt.setString(1, matricula);
+							stmt.executeUpdate();
+				  
+							System.out.println("Se elimino correctamente!! ");
+							} catch (SQLException e) {
+							  e.printStackTrace();
+							}
+																			 }
+//=================================================================================================
+	
 }

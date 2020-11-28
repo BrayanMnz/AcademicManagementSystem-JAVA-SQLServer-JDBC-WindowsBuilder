@@ -12,7 +12,7 @@ import java.sql.Statement;
  
 public class SQLDatabaseConnection {
  
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
  
        // InsertarAsignatura("ITT348T", "Redes Telematicas II", 4, 3, 1);
        // InsertarEstudiante("20170843", "Jose", "Rafael", "Almonte", null, "ITT", "Contado", "DOM", null);
@@ -26,6 +26,36 @@ public class SQLDatabaseConnection {
       // InsertarGrupoHorario("202020212", "ITT328T", "001", 3, java.sql.Time.valueOf("18:00:00"),java.sql.Time.valueOf("20:00:00")); 
       // UpdateGrupoHorario("202020211", "ITT338T", "001", 5, java.sql.Time.valueOf("14:00:00"),java.sql.Time.valueOf("16:00:00"));
       // DeleteGrupoHorario("202020212", "ITT328T", "001");
+    	
+    	   String matricula_ = "20170770";
+   		
+   		Connection conn = null;
+   		 
+   	 
+
+   	        String dbURL = "jdbc:sqlserver://MUÑOZV";
+   	        String user = "Brayan";
+   	        String pass = "12345";
+   	        conn = DriverManager.getConnection(dbURL, user, pass);
+   	        if (conn != null) {
+   	            System.out.println("Conexion establecida ");
+   	        			      }
+   	     String query = "select * FROM Estudiante WHERE Matricula = ".concat(matricula_);
+   	    try (Statement stmt = conn.createStatement()) {
+   	      ResultSet rs = stmt.executeQuery(query);
+   	      while (rs.next()) {
+   	        String coffeeName = rs.getString("Matricula");
+   	        String supplierID = rs.getString("Nombre1");
+   	        String price = rs.getString("Nombre2");
+   	        String sales = rs.getString("Apellido1");
+   	        String total = rs.getString("Apellido2");
+   	        System.out.println(coffeeName + ", " + supplierID + ", " + price +
+   	                           ", " + sales + ", " + total);
+   	      }
+   	    } 
+    	
+    	
+    	
     }
 
 
@@ -622,6 +652,8 @@ public static void UpdateGrupoHorario (
 						  e.printStackTrace();
 						}
 																		 }		
+
+//============================================================================		
 		public static void DeleteEstudiante (String PK_Matricula) {
 			
 			String matricula = PK_Matricula;

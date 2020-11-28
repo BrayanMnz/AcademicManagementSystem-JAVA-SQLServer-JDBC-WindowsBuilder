@@ -11,8 +11,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.EtchedBorder;
 
-import Logica.Academica;
+
 import Logica.Estudiante;
+
 
 import java.awt.Font;
 import javax.swing.JTextField;
@@ -20,7 +21,24 @@ import javax.swing.SwingConstants;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 
 public class RegEstudiante extends JDialog {
 
@@ -33,8 +51,17 @@ public class RegEstudiante extends JDialog {
 	private JTextField txtCarrera;
 	private JTextField txtDireccion;
 	private JTextField txtNacionalidad;
-	
-	private Estudiante miEstudiante;
+	private int index;
+	private static DefaultTableModel model; 
+	private static Object[] fila;
+	private String auxMatricula;
+
+	private JTable tblEstudiantes;
+	JButton btnEliminarEstudiante;
+	JButton btnModificarEstudiante;
+	JButton btnInsertarEstudiante;
+	JComboBox cbxCatPago;
+	private static String ret_Array[];
 
 	/**
 	 * Launch the application.
@@ -53,6 +80,12 @@ public class RegEstudiante extends JDialog {
 	 * Create the dialog.
 	 */
 	public RegEstudiante() {
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowOpened(WindowEvent e) {
+				cargarEstudiantes();
+			}
+		});
 		setModal(true);
 		setResizable(false);
 		setTitle("Registro de Estudiantes");
@@ -162,7 +195,7 @@ public class RegEstudiante extends JDialog {
 			panel_RegEstudiante.add(txtNacionalidad);
 			txtNacionalidad.setColumns(10);
 			
-			JButton btnInsertarEstudiante = new JButton("Insertar");
+			 btnInsertarEstudiante = new JButton("Insertar");
 			btnInsertarEstudiante.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if(txtNombre1.getText().isEmpty() || txtApellido1.getText().isEmpty() || txtMatricula.getText().isEmpty()
@@ -175,24 +208,240 @@ public class RegEstudiante extends JDialog {
 				}
 			});
 			btnInsertarEstudiante.setFont(new Font("Courier New", Font.BOLD, 12));
-			btnInsertarEstudiante.setBounds(511, 140, 89, 23);
+			btnInsertarEstudiante.setBounds(204, 120, 118, 36);
 			panel_RegEstudiante.add(btnInsertarEstudiante);
+			
+			 btnModificarEstudiante = new JButton("Modificar");
+			btnModificarEstudiante.setEnabled(false);
+			btnModificarEstudiante.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if(cbxCatPago.getSelectedItem().toString().equalsIgnoreCase("<Seleccione>")) {
+						JOptionPane.showMessageDialog(null, "Elija una categoria de pago ", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+					else {
+					
+					Estudiante.UpdateEstudiante(txtMatricula.getText(), txtNombre1.getText(), txtNombre2.getText(), txtApellido1.getText(), txtApellido2.getText(), txtCarrera.getText(), (String) cbxCatPago.getSelectedItem(), txtNacionalidad.getText(), txtDireccion.getText());
+					JOptionPane.showMessageDialog(null, "Se modifico correctamente!! ", "Notificacion", JOptionPane.INFORMATION_MESSAGE);
+					cargarEstudiantes();
+					Clean();
+					}
+				}
+
+			
+			});
+			btnModificarEstudiante.setFont(new Font("Courier New", Font.BOLD, 12));
+			btnModificarEstudiante.setBounds(388, 120, 118, 36);
+			panel_RegEstudiante.add(btnModificarEstudiante);
+			
+		
+			btnEliminarEstudiante = new JButton("Eliminar");
+			btnEliminarEstudiante.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					Estudiante.DeleteEstudiante(txtMatricula.getText());
+					cargarEstudiantes();
+					Clean();
+					JOptionPane.showMessageDialog(null, "Se elimino correctamente!! ", "Notificacion", JOptionPane.INFORMATION_MESSAGE);
+					
+				}
+			});
+			btnEliminarEstudiante.setEnabled(false);
+			btnEliminarEstudiante.setFont(new Font("Courier New", Font.BOLD, 12));
+			btnEliminarEstudiante.setBounds(572, 120, 118, 36);
+			panel_RegEstudiante.add(btnEliminarEstudiante);
 		}
+		
+		JPanel panel_verEstudiantes = new JPanel();
+		panel_verEstudiantes.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Estudiantes Registrados", TitledBorder.CENTER, TitledBorder.TOP, null, null));
+		panel_verEstudiantes.setBounds(5, 190, 710, 173);
+		contentPanel.add(panel_verEstudiantes);
+		panel_verEstudiantes.setLayout(new BorderLayout(0, 0));
+		
+		JScrollPane scrollPaneEstudiantes = new JScrollPane();
+		panel_verEstudiantes.add(scrollPaneEstudiantes);
+		
+		tblEstudiantes = new JTable();
+		tblEstudiantes.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				index = tblEstudiantes.getSelectedRow();
+				if(index >= 0) { 
+				    auxMatricula = (String)tblEstudiantes.getModel().getValueAt(index, 0).toString();
+				    
+				    try {
+						ArrayList<String> aux = buscarPorMatricula(auxMatricula);
+						txtMatricula.setText(aux.get(0));
+						txtNombre1.setText(aux.get(1));
+						txtNombre2.setText(aux.get(2));
+						txtApellido1.setText(aux.get(3));
+						txtApellido2.setText(aux.get(4));
+						txtCarrera.setText(aux.get(5));
+						txtNacionalidad.setText(aux.get(7));
+						txtDireccion.setText(aux.get(8));
+
+						
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				    txtMatricula.setEditable(false);
+				    btnEliminarEstudiante.setEnabled(true);
+				    btnInsertarEstudiante.setEnabled(false);
+				    btnModificarEstudiante.setEnabled(true);
+				   
+				}
+				
+			}
+		});
+		scrollPaneEstudiantes.setViewportView(tblEstudiantes);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("OK");
+				JButton okButton = new JButton("Actualizar Lista");
+				okButton.setFont(new Font("Courier New", Font.BOLD, 12));
+				okButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						cargarEstudiantes();
+					}
+				});
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
+				cancelButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						dispose();
+					}
+				});
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 			}
 		}
 	}
+	
+	private void cargarEstudiantes() {
+		
+		Connection conn = null;
+	    try
+	    {
+	    	 String dbURL = "jdbc:sqlserver://MUÑOZV";
+	         String user = "Brayan";
+	         String pass = "12345";
+	         conn = DriverManager.getConnection(dbURL, user, pass);
+	         if (conn != null) {
+	             System.out.println("Conexion establecida ");
+	         			      }
+	         String query = "SELECT E.Matricula, E.Nombre1 + LEFT(E.Nombre2, 1)+'.' AS 'Nombre',E.Apellido1+LEFT(E.Apellido2, 1)+'.' AS 'Apellidos',\r\n" + 
+	         		"E.Carrera, E.CategoriaPago AS 'Cat. Pago', E.Nacionalidad, E.Direccion\r\n" + 
+	         		"FROM Estudiante E";
+	    PreparedStatement st =conn.prepareStatement(query);
+	    ResultSet rs = st.executeQuery();
+	    
+	    
+	        //Create new table model
+	        DefaultTableModel tableModel = new DefaultTableModel();
+
+	        //Retrieve meta data from ResultSet
+	        ResultSetMetaData metaData = rs.getMetaData();
+
+	        //Get number of columns from meta data
+	        int columnCount = metaData.getColumnCount();
+
+	        //Get all column names from meta data and add columns to table model
+	        for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++){
+	            tableModel.addColumn(metaData.getColumnLabel(columnIndex));
+	        }
+
+	        //Create array of Objects with size of column count from meta data
+	        Object[] row = new Object[columnCount];
+
+	        //Scroll through result set
+	        while (rs.next()){
+	            //Get object from column with specific index of result set to array of objects
+	            for (int i = 0; i < columnCount; i++){
+	                row[i] = rs.getObject(i+1);
+	            }
+	            //Now add row to table model with that array of objects as an argument
+	            tableModel.addRow(row);
+	        }
+
+	        //Now add that table model to your table and you are done :D
+	        tblEstudiantes.setModel(tableModel);
+	    
+	    conn.close();
+	    }
+	    catch(Exception ex)
+	    {
+	    JOptionPane.showMessageDialog(null, ex.toString());
+	    }
+	}
+	
+	
+	public static  ArrayList<String> buscarPorMatricula (String matricula) throws SQLException 
+					{
+		 ArrayList<String> ret = new ArrayList<String>();
+				    String matricula_ = matricula;
+				  
+			   		Connection conn = null;
+
+			   	        String dbURL = "jdbc:sqlserver://MUÑOZV";
+			   	        String user = "Brayan";
+			   	        String pass = "12345";
+			   	        conn = DriverManager.getConnection(dbURL, user, pass);
+			   	        if (conn != null) {
+			   	            System.out.println("Conexion establecida ");
+			   	        			      }
+			   	     String query = "select * FROM Estudiante WHERE Matricula = ".concat(matricula_);
+			   	    try (Statement stmt = conn.createStatement()) {
+			   	      ResultSet rs = stmt.executeQuery(query);
+			   	      while (rs.next()) {
+			   	        String Matricula1 = rs.getString("Matricula");
+			   	        String Nombre1    = rs.getString("Nombre1");
+			   	        String Nombre2    = rs.getString("Nombre2");
+			   	        String Apellido1  = rs.getString("Apellido1");
+			   	        String Apellido2  = rs.getString("Apellido2");
+			   	        
+			   	        String Carrera    = rs.getString("Carrera");
+			   	        String CategoriaPago  = rs.getString("CategoriaPago");
+			   	        String  Nacionalidad  = rs.getString("Nacionalidad");
+			   	        String Direccion  = rs.getString("Direccion");
+			   	         
+			   	     ret.add(Matricula1);
+			   	     ret.add(Nombre1);
+			   	     ret.add(Nombre2);
+			   	     ret.add(Apellido1);
+			   	     ret.add(Apellido2);
+			   	     ret.add(Carrera);
+			   	     ret.add(CategoriaPago);
+			   	     ret.add(Nacionalidad);
+			   	     ret.add(Direccion);
+			   	     
+			   	      }
+			   	    } 
+			    	
+			    	
+	       
+	            return ret;
+	      
+					}
+	
+	private void Clean() {
+	txtApellido1.setText("");
+	txtApellido2.setText("");
+	txtNombre1.setText("");
+	txtNombre2.setText("");
+	txtCarrera.setText("");
+	txtNacionalidad.setText("");
+	txtMatricula.setText("");
+	txtDireccion.setText("");
+
+	}
+	
+	
+	
+	
+	
 }
