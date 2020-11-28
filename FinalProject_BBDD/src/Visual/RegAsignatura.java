@@ -126,10 +126,16 @@ public class RegAsignatura extends JDialog {
 						else {
 							Asignatura.InsertarAsignatura(txtCodAsignatura.getText(), txtNombreAsignatura.getText(), Integer.parseInt(spnCreditos.getValue().toString()), Integer.parseInt(spnHrTeoricas.getValue().toString()), Integer.parseInt( spnHrPracticas.getValue().toString()));
 							JOptionPane.showMessageDialog(null, "Asignatura Insertada!  ", "Notificacion", JOptionPane.INFORMATION_MESSAGE);
-							
+							txtCodAsignatura.setText("");
+							txtNombreAsignatura.setText("");
+							spnCreditos.setValue(0);
+							spnHrTeoricas.setValue(0);
+							spnHrPracticas.setValue(0);
 						} 
 						
 					}
+
+					
 				});
 				btnInsertar.setActionCommand("OK");
 				buttonPane.add(btnInsertar);
