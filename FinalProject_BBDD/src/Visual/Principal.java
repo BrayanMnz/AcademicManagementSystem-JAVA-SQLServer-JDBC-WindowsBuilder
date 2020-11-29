@@ -69,6 +69,9 @@ public class Principal extends JDialog {
 					JMenuItem mntmAddStudent = new JMenuItem("A\u00F1adir Estudiante");
 					mntmAddStudent.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
+							RegEstudiante cliente1 = new RegEstudiante();
+							cliente1.setModal(true);
+							cliente1.setVisible(true);
 							
 							//==============================
 						}

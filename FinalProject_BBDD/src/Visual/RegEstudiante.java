@@ -61,8 +61,8 @@ public class RegEstudiante extends JDialog {
 	JButton btnModificarEstudiante;
 	JButton btnInsertarEstudiante;
 	JComboBox cbxCatPago;
-	private static String ret_Array[];
-
+	JButton btnInsert;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -204,6 +204,8 @@ public class RegEstudiante extends JDialog {
 						}
 					else { Estudiante.InsertarEstudiante(txtMatricula.getText(), txtNombre1.getText(), txtNombre2.getText(), txtApellido1.getText(), txtApellido2.getText(), txtCarrera.getText(), (String) cbxCatPago.getSelectedItem(), txtNacionalidad.getText(), txtDireccion.getText());
 					JOptionPane.showMessageDialog(null, "Insertado Correctamente", "Notificacion", JOptionPane.INFORMATION_MESSAGE);
+					cargarEstudiantes();
+					Clean();
 					}
 				}
 			});
@@ -284,6 +286,7 @@ public class RegEstudiante extends JDialog {
 						e1.printStackTrace();
 					}
 				    txtMatricula.setEditable(false);
+				    btnInsert.setEnabled(true);
 				    btnEliminarEstudiante.setEnabled(true);
 				    btnInsertarEstudiante.setEnabled(false);
 				    btnModificarEstudiante.setEnabled(true);
@@ -303,8 +306,24 @@ public class RegEstudiante extends JDialog {
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						cargarEstudiantes();
+						JOptionPane.showMessageDialog(null, "Lista actualizada !  ", "Notificacion", JOptionPane.INFORMATION_MESSAGE);
+						
+						
 					}
 				});
+				
+				btnInsert = new JButton("Insertar Nuevo");
+				btnInsert.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						Clean();
+						txtMatricula.setEditable(true);
+						btnInsert.setEnabled(false);
+						btnInsertarEstudiante.setEnabled(true);
+						btnEliminarEstudiante.setEnabled(false);
+						btnModificarEstudiante.setEnabled(false);
+					}
+				});
+				buttonPane.add(btnInsert);
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);

@@ -27,7 +27,7 @@ public class SQLDatabaseConnection {
       // UpdateGrupoHorario("202020211", "ITT338T", "001", 5, java.sql.Time.valueOf("14:00:00"),java.sql.Time.valueOf("16:00:00"));
       // DeleteGrupoHorario("202020212", "ITT328T", "001");
     	
-    	   String matricula_ = "20170770";
+    	   String matricula_ = "ISC484P";
    		
    		Connection conn = null;
    		 
@@ -40,17 +40,19 @@ public class SQLDatabaseConnection {
    	        if (conn != null) {
    	            System.out.println("Conexion establecida ");
    	        			      }
-   	     String query = "select * FROM Estudiante WHERE Matricula = ".concat(matricula_);
-   	    try (Statement stmt = conn.createStatement()) {
-   	      ResultSet rs = stmt.executeQuery(query);
-   	      while (rs.next()) {
-   	        String coffeeName = rs.getString("Matricula");
-   	        String supplierID = rs.getString("Nombre1");
-   	        String price = rs.getString("Nombre2");
-   	        String sales = rs.getString("Apellido1");
-   	        String total = rs.getString("Apellido2");
-   	        System.out.println(coffeeName + ", " + supplierID + ", " + price +
-   	                           ", " + sales + ", " + total);
+   	     String query = "Select * \r\n" + 
+   	     		"FROM Asignatura WHERE [Cod Asignatura]=".concat("'"+matricula_+"'");
+ 	    try (Statement stmt = conn.createStatement()) {
+ 	      ResultSet rs = stmt.executeQuery(query);
+ 	      while (rs.next()) {
+ 	        String codigo   = rs.getString("Cod Asignatura");
+ 	        String nombre   = rs.getString("Nombre");
+ 	        int    creditos = rs.getInt("Creditos");
+ 	        int hrTeoricas  = rs.getInt("HorasTeoricas");
+ 	        int hrPracticas  = rs.getInt("HorasPracticas");
+ 	        
+   	        System.out.println(codigo+ ", " + nombre + ", " + creditos +
+   	                           ", " + hrTeoricas + ", " + hrPracticas);
    	      }
    	    } 
     	
