@@ -63,10 +63,10 @@ public class Principal extends JDialog {
 			JMenuBar menuBar = new JMenuBar();
 			setJMenuBar(menuBar);
 			{
-				JMenu mnEstudiante = new JMenu("Estudiante");
+				JMenu mnEstudiante = new JMenu("Estudiantes");
 				menuBar.add(mnEstudiante);
 				{
-					JMenuItem mntmAddStudent = new JMenuItem("A\u00F1adir Estudiante");
+					JMenuItem mntmAddStudent = new JMenuItem("Manejo de Estudiantes");
 					mntmAddStudent.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 							RegEstudiante cliente1 = new RegEstudiante();
@@ -77,6 +77,47 @@ public class Principal extends JDialog {
 						}
 					});
 					mnEstudiante.add(mntmAddStudent);
+				}
+			}
+			{
+				JMenu mnGrupo = new JMenu("Grupos");
+				menuBar.add(mnGrupo);
+				{
+					JMenuItem mntmGrupos = new JMenuItem("Manejo de Grupos");
+					mntmGrupos.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							RegGrupo g1 = new RegGrupo();
+							g1.setModal(true);
+							g1.setVisible(true);
+						}
+					});
+					mnGrupo.add(mntmGrupos);
+				}
+			}
+			{
+				JMenu mnAsignatura = new JMenu("Asignatura");
+				menuBar.add(mnAsignatura);
+				{
+					JMenuItem mntmRegAsignatura = new JMenuItem("Registrar Asignatura");
+					mntmRegAsignatura.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							RegAsignatura a1 = new RegAsignatura();
+							a1.setModal(true);
+							a1.setVisible(true);
+						}
+					});
+					mnAsignatura.add(mntmRegAsignatura);
+				}
+				{
+					JMenuItem mntmListarAsignatura = new JMenuItem("Listar Asignatura");
+					mntmListarAsignatura.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							ListarAsignaturas la1 = new ListarAsignaturas();
+							la1.setVisible(true);
+							la1.setModal(true);
+						}
+					});
+					mnAsignatura.add(mntmListarAsignatura);
 				}
 			}
 		}

@@ -1,12 +1,18 @@
 package Logica;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
+//import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.swing.JFormattedTextField;
 
 
  
@@ -23,41 +29,39 @@ public class SQLDatabaseConnection {
        //DeleteAsignatura("ITT348T");
        //DeleteGrupo("202020211", "ISC484T", "001");
        // DeleteEstudiante("20170771");
-      // InsertarGrupoHorario("202020212", "ITT328T", "001", 3, java.sql.Time.valueOf("18:00:00"),java.sql.Time.valueOf("20:00:00")); 
+      //InsertarGrupoHorario("202020212", "ITT328T", "001", 3, java.sql.Time.valueOf("18:00:00"),java.sql.Time.valueOf("20:00:00")); 
       // UpdateGrupoHorario("202020211", "ITT338T", "001", 5, java.sql.Time.valueOf("14:00:00"),java.sql.Time.valueOf("16:00:00"));
       // DeleteGrupoHorario("202020212", "ITT328T", "001");
     	
-    	   String matricula_ = "ISC484P";
-   		
-   		Connection conn = null;
-   		 
-   	 
-
-   	        String dbURL = "jdbc:sqlserver://MUÑOZV";
-   	        String user = "Brayan";
-   	        String pass = "12345";
-   	        conn = DriverManager.getConnection(dbURL, user, pass);
-   	        if (conn != null) {
-   	            System.out.println("Conexion establecida ");
-   	        			      }
-   	     String query = "Select * \r\n" + 
-   	     		"FROM Asignatura WHERE [Cod Asignatura]=".concat("'"+matricula_+"'");
- 	    try (Statement stmt = conn.createStatement()) {
- 	      ResultSet rs = stmt.executeQuery(query);
- 	      while (rs.next()) {
- 	        String codigo   = rs.getString("Cod Asignatura");
- 	        String nombre   = rs.getString("Nombre");
- 	        int    creditos = rs.getInt("Creditos");
- 	        int hrTeoricas  = rs.getInt("HorasTeoricas");
- 	        int hrPracticas  = rs.getInt("HorasPracticas");
- 	        
-   	        System.out.println(codigo+ ", " + nombre + ", " + creditos +
-   	                           ", " + hrTeoricas + ", " + hrPracticas);
-   	      }
-   	    } 
-    	
-    	
-    	
+//    	   String matricula_ = "ISC484P";
+//   		
+//   		Connection conn = null;
+//   		 
+//   	 
+//
+//   	        String dbURL = "jdbc:sqlserver://MUÑOZV";
+//   	        String user = "Brayan";
+//   	        String pass = "12345";
+//   	        conn = DriverManager.getConnection(dbURL, user, pass);
+//   	        if (conn != null) {
+//   	            System.out.println("Conexion establecida ");
+//   	        			      }
+//   	     String query = "Select * \r\n" + 
+//   	     		"FROM Asignatura WHERE [Cod Asignatura]=".concat("'"+matricula_+"");
+// 	    try (Statement stmt = conn.createStatement()) {
+// 	      ResultSet rs = stmt.executeQuery(query);
+// 	      while (rs.next()) {
+// 	        String codigo   = rs.getString("Cod Asignatura");
+// 	        String nombre   = rs.getString("Nombre");
+// 	        int    creditos = rs.getInt("Creditos");
+// 	        int hrTeoricas  = rs.getInt("HorasTeoricas");
+// 	        int hrPracticas  = rs.getInt("HorasPracticas");
+// 	        
+//   	        System.out.println(codigo+ ", " + nombre + ", " + creditos +
+//   	                           ", " + hrTeoricas + ", " + hrPracticas);
+//   	      }
+//   	    } 
+    	System.out.println(buscarGrupoHorario("202020212", "ISC484T", "001"));
     }
 
 
@@ -712,4 +716,39 @@ public static void UpdateGrupoHorario (
 		}
 //=================================================================================================		
 
+		public static  String buscarGrupoHorario (String periodo_,String asignatura_,String grupo_) throws SQLException 
+		{
+		String ret = null;
+		String per = periodo_;
+		String asig = asignatura_;
+		String grupo = grupo_;
+
+			Connection conn = null;
+
+		       String dbURL = "jdbc:sqlserver://MUÑOZV";
+		       String user = "Brayan";
+		       String pass = "12345";
+		       conn = DriverManager.getConnection(dbURL, user, pass);
+		       if (conn != null) {
+		           System.out.println("Conexion establecida ");
+		       			      }
+		    String query = "Select G.Horario from Grupo G\r\n" + 
+		    		"Where G.[Cod Asignatura] ='".concat(asig+"'")+"AND G.CodPeriodoAcad = '".concat(per+"'")+" AND G.NumGrupo = '".concat(grupo+"'");
+		    
+		    try (Statement stmt = conn.createStatement()) {
+		     ResultSet rs = stmt.executeQuery(query);
+		     while (rs.next()) {
+		       String Horario = rs.getString("Horario");
+		    
+		        
+		    ret = Horario;
+		     }
+		   } 
+
+
+
+		return ret;
+
+		}
+		
 }
