@@ -11,12 +11,16 @@ import javax.swing.border.SoftBevelBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.DateFormatter;
 import javax.swing.text.MaskFormatter;
+
+import Logica.periodoAcademico;
+
 import javax.swing.border.BevelBorder;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.Font;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,6 +39,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.lang.ref.Cleaner.Cleanable;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class RegPeriodoAcademico extends JDialog {
 
@@ -44,8 +51,15 @@ public class RegPeriodoAcademico extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private JTextField txtPerAcad;
-	private JTextField textField;
+	private JTextField txtDescripcion;
 	JFormattedTextField ftxtInicioPeriodo;
+	JFormattedTextField ftxtLimiteRetiro;
+	JFormattedTextField ftxtFinPeriodo ;
+	JFormattedTextField ftxtInicioClases ;
+	JFormattedTextField ftxtLimitePrem;
+	JFormattedTextField ftxtFinClases;
+	JFormattedTextField ftxtLimitePago;
+	JFormattedTextField ftxtLimitePublicacion;
 	private JTable tblPeriodosAcademicos;
 	
 	private static DefaultTableModel model; 
@@ -103,10 +117,10 @@ public class RegPeriodoAcademico extends JDialog {
 		lblDescripcion.setBounds(10, 79, 119, 14);
 		panel.add(lblDescripcion);
 		
-		textField = new JTextField();
-		textField.setBounds(20, 96, 153, 20);
-		panel.add(textField);
-		textField.setColumns(10);
+		txtDescripcion = new JTextField();
+		txtDescripcion.setBounds(20, 96, 153, 20);
+		panel.add(txtDescripcion);
+		txtDescripcion.setColumns(10);
 		
 		JLabel lblFechainicioPer = new JLabel("Fecha Inicio Periodo:");
 		lblFechainicioPer.setFont(new Font("Courier New", Font.BOLD, 12));
@@ -121,19 +135,19 @@ public class RegPeriodoAcademico extends JDialog {
 		MaskFormatter formatoFecha = null;
 		
 		try {
-			formatoFecha = new MaskFormatter("##-##-####");
+			formatoFecha = new MaskFormatter("####-##-##");
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		formatoFecha.setPlaceholder("88-88-8888");
+		formatoFecha.setPlaceholder("1912-12-31");
 		ftxtInicioPeriodo =  new JFormattedTextField(formatoFecha);
 		
 		
 		ftxtInicioPeriodo.setBounds(273, 37, 153, 20);
 		panel.add(ftxtInicioPeriodo);
 		
-		JFormattedTextField ftxtFinPeriodo = new JFormattedTextField(formatoFecha);
+		ftxtFinPeriodo = new JFormattedTextField(formatoFecha);
 		ftxtFinPeriodo.setBounds(273, 93, 153, 20);
 		panel.add(ftxtFinPeriodo);
 		
@@ -148,7 +162,7 @@ public class RegPeriodoAcademico extends JDialog {
 		lblFechainicioClases.setBounds(532, 23, 177, 14);
 		panel.add(lblFechainicioClases);
 		
-		JFormattedTextField ftxtInicioClases = new JFormattedTextField(formatoFecha);
+		 ftxtInicioClases = new JFormattedTextField(formatoFecha);
 		ftxtInicioClases.setBounds(542, 37, 153, 20);
 		panel.add(ftxtInicioClases);
 		
@@ -157,7 +171,7 @@ public class RegPeriodoAcademico extends JDialog {
 		lblFechaFinClases.setBounds(532, 79, 177, 14);
 		panel.add(lblFechaFinClases);
 		
-		JFormattedTextField ftxtFinClases = new JFormattedTextField(formatoFecha);
+		 ftxtFinClases = new JFormattedTextField(formatoFecha);
 		ftxtFinClases.setBounds(542, 93, 153, 20);
 		panel.add(ftxtFinClases);
 		
@@ -166,7 +180,7 @@ public class RegPeriodoAcademico extends JDialog {
 		lblFechaLimitePago.setBounds(264, 141, 177, 14);
 		panel.add(lblFechaLimitePago);
 		
-		JFormattedTextField ftxtLimitePago = new JFormattedTextField(formatoFecha);
+		 ftxtLimitePago = new JFormattedTextField(formatoFecha);
 		ftxtLimitePago.setBounds(274, 155, 153, 20);
 		panel.add(ftxtLimitePago);
 		
@@ -176,7 +190,7 @@ public class RegPeriodoAcademico extends JDialog {
 		lblFechaLimitePrematricula.setBounds(263, 196, 183, 14);
 		panel.add(lblFechaLimitePrematricula);
 		
-		JFormattedTextField ftxtLimitePrem = new JFormattedTextField(formatoFecha);
+	    ftxtLimitePrem = new JFormattedTextField(formatoFecha);
 		ftxtLimitePrem.setBounds(273, 210, 153, 20);
 		panel.add(ftxtLimitePrem);
 		
@@ -190,7 +204,7 @@ public class RegPeriodoAcademico extends JDialog {
 		lblFechaLimiteRetiro.setBounds(527, 141, 177, 14);
 		panel.add(lblFechaLimiteRetiro);
 		
-		JFormattedTextField ftxtLimiteRetiro = new JFormattedTextField(formatoFecha);
+		ftxtLimiteRetiro = new JFormattedTextField(formatoFecha);
 		ftxtLimiteRetiro.setBounds(537, 155, 153, 20);
 		panel.add(ftxtLimiteRetiro);
 		
@@ -200,9 +214,65 @@ public class RegPeriodoAcademico extends JDialog {
 		lblFechaLimitePublicacion.setBounds(526, 196, 183, 14);
 		panel.add(lblFechaLimitePublicacion);
 		
-		JFormattedTextField ftxtLimitePublicacion = new JFormattedTextField(formatoFecha);
+		ftxtLimitePublicacion = new JFormattedTextField(formatoFecha);
 		ftxtLimitePublicacion.setBounds(536, 210, 153, 20);
 		panel.add(ftxtLimitePublicacion);
+		
+		JButton btnInsertar = new JButton("Insertar");
+		btnInsertar.setFont(new Font("Tahoma", Font.PLAIN, 9));
+		btnInsertar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if(txtPerAcad.getText().equalsIgnoreCase("1912-12-31") || txtDescripcion.getText().equalsIgnoreCase("1912-12-31") || ftxtInicioPeriodo.getText().equalsIgnoreCase("1912-12-31") ||  ftxtFinPeriodo.getText().equalsIgnoreCase("1912-12-31") ||
+			    		ftxtInicioClases.getText().equalsIgnoreCase("1912-12-31") || ftxtFinClases.getText().equalsIgnoreCase("1912-12-31") || ftxtLimitePago.getText().equalsIgnoreCase("1912-12-31") ||
+			    		ftxtLimitePrem.getText().equalsIgnoreCase("1912-12-31") || ftxtLimiteRetiro.getText().equalsIgnoreCase("1912-12-31") || ftxtLimitePublicacion.getText().equalsIgnoreCase("1912-12-31")) 
+						
+				{ 		JOptionPane.showMessageDialog(null, "Debe completar todos los campos! ", "Error", JOptionPane.WARNING_MESSAGE);
+				
+											}
+				else if (txtPerAcad.getText().isEmpty() || txtDescripcion.getText().isEmpty() || ftxtInicioPeriodo.getText().isEmpty() ||  ftxtFinPeriodo.getText().isEmpty()||
+			    		ftxtInicioClases.getText().isEmpty()|| ftxtFinClases.getText().isEmpty()|| ftxtLimitePago.getText().isEmpty() ||
+			    		ftxtLimitePrem.getText().isEmpty() || ftxtLimiteRetiro.getText().isEmpty() || ftxtLimitePublicacion.getText().isEmpty()) 
+				{ 
+					JOptionPane.showMessageDialog(null, "Debe completar todos los campos! ", "Error", JOptionPane.WARNING_MESSAGE);
+					
+				}
+			    
+				else {
+				periodoAcademico a1 = new periodoAcademico(txtPerAcad.getText(), txtDescripcion.getText(), Date.valueOf(ftxtInicioPeriodo.getText()),Date.valueOf(ftxtFinPeriodo.getText()),
+			    		Date.valueOf(ftxtInicioClases.getText()), Date.valueOf(ftxtFinClases.getText()),Date.valueOf(ftxtLimitePago.getText()),
+			    		Date.valueOf(ftxtLimitePrem.getText()),Date.valueOf(ftxtLimiteRetiro.getText()), Date.valueOf(ftxtLimitePublicacion.getText()));
+			   
+				periodoAcademico.InsertarPerAcad(a1);
+			    
+			    clean();
+			    cargarPeriodos();
+				
+				}
+			}
+
+	
+		});
+		btnInsertar.setBounds(10, 127, 71, 103);
+		panel.add(btnInsertar);
+		
+		JButton btnEliminar = new JButton("Eliminar");
+		btnEliminar.setFont(new Font("Tahoma", Font.PLAIN, 9));
+		btnEliminar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			periodoAcademico.DeletePeriodo(txtPerAcad.getText());
+			cargarPeriodos();
+			clean();
+			
+			}
+		});
+		btnEliminar.setBounds(183, 127, 71, 103);
+		panel.add(btnEliminar);
+		
+		JButton btnModificar = new JButton("Modificar");
+		btnModificar.setFont(new Font("Tahoma", Font.PLAIN, 9));
+		btnModificar.setBounds(91, 127, 82, 103);
+		panel.add(btnModificar);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
@@ -245,7 +315,7 @@ private void cargarPeriodos() {
 	         if (conn != null) {
 	             System.out.println("Conexion establecida ");
 	         			      }
-	         String query = "Select PA.[Cod PeriodoAcad] as 'Periodo', PA.Descripcion, PA.FechaInicio as 'F. Inicio', PA.FechaFin as 'F. Fin', PA.FechaInicioClases as 'F. Inicio Clases', PA.FechaLimitePago as 'F. Limite Pago',\r\n" + 
+	         String query = "Select PA.[Cod PeriodoAcad] as 'Periodo', PA.Descripcion, PA.FechaInicio as 'F. Inicio', PA.FechaFin as 'F. Fin', PA.FechaInicioClases as 'F. Inicio Clases', PA.FechaFinClases as 'F. Fin Clases', PA.FechaLimitePago as 'F. Limite Pago',\r\n" + 
 	         		"PA.FechaLimitePrematricula as 'F. Lim Prem', PA.FechaLimiteRetiro as 'F. Lim Retiro', PA.FechaLimitePublicacion as 'F. Lim. Publ'\r\n" + 
 	         		"From PeriodoAcademico PA";
 	    PreparedStatement st =conn.prepareStatement(query);
@@ -288,7 +358,20 @@ private void cargarPeriodos() {
 	    {
 	    JOptionPane.showMessageDialog(null, ex.toString());
 	    }
+	    
 	}
+
+private void clean() {
+	txtPerAcad.setText("");
+	txtDescripcion.setText(""); 
+	ftxtInicioPeriodo.setText("");
+	ftxtFinPeriodo.setText("");				
+    ftxtInicioClases.setText("");
+    ftxtFinClases.setText("");
+    ftxtLimitePago.setText("");
+    ftxtLimitePrem.setText("");
+    ftxtLimiteRetiro.setText("");
+    ftxtLimitePublicacion.setText("");
 	
-	
+}
 }

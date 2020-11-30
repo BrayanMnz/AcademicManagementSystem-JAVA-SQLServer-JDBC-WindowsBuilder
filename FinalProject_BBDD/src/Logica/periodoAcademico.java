@@ -1,6 +1,11 @@
 package Logica;
 
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class periodoAcademico {
 	
@@ -91,4 +96,89 @@ public class periodoAcademico {
 		this.fechaLimitPublicacion = fechaLimitPublicacion;
 	}
 
+	//=================================================================================================
+
+	public static void InsertarPerAcad (periodoAcademico auxPer)     
+			{
+			periodoAcademico aux = auxPer;
+				
+				
+									
+				
+				Connection conn = null;
+				 
+			    try {
+
+			        String dbURL = "jdbc:sqlserver://MUÑOZV";
+			        String user = "Brayan";
+			        String pass = "12345";
+			        conn = DriverManager.getConnection(dbURL, user, pass);
+			        if (conn != null) {
+			            System.out.println("Conexion establecida ");
+			        			      }
+
+			        try (Statement stmt = conn.createStatement()) {
+			        	
+			       
+			            String sqlQuery = "Insert into PeriodoAcademico ([Cod PeriodoAcad],Descripcion, FechaInicio, FechaFin, FechaInicioClases, FechaFinClases, FechaLimitePago, FechaLimitePrematricula,FechaLimiteRetiro,FechaLimitePublicacion)"
+			                    + " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			            PreparedStatement prepStmt = conn.prepareStatement(sqlQuery);
+			            prepStmt.setString(1, aux.getCodPeriodoAcad()); 
+			            prepStmt.setString(2, aux.getDescripcion());
+			            prepStmt.setDate(3, aux.getFechaInicio()); 
+			            prepStmt.setDate(4, aux.getFechaFin());
+			            prepStmt.setDate(5, aux.getFechaInicioClases()); 
+			            prepStmt.setDate(6, aux.getFechaFinClases()); 
+			            prepStmt.setDate(7, aux.getFechaLimitePago()); 
+			            prepStmt.setDate(8, aux.getFechaLimitePrematricula()); 
+			            prepStmt.setDate(9, aux.getFechaLimiteRetiro()); 
+			            prepStmt.setDate(10, aux.getFechaLimitPublicacion()); 
+				           
+			        
+			            prepStmt.executeUpdate();
+			            prepStmt.close();
+			        	
+			        } catch (SQLException e) {
+			          e.printStackTrace();
+			        }        
+
+			    } catch (SQLException ex) {
+			        ex.printStackTrace();
+			    } finally {
+			        try {
+			            if (conn != null && !conn.isClosed()) {
+			                conn.close();
+			            }
+			        } catch (SQLException ex) {
+			            ex.printStackTrace();
+			        }
+			    }
+				 }
+	//=================================================================================================
+	
+	//============================================================================		
+	public static void DeletePeriodo (String PK_Periodo) {
+		
+		String periodo_ = PK_Periodo;
+		
+		
+			  String dbURL = "jdbc:sqlserver://MUÑOZV";
+		      String user = "Brayan";
+		      String pass = "12345";
+		      
+		      
+		      String sql = "DELETE FROM PeriodoAcademico WHERE [Cod PeriodoAcad] = ?";
+		
+		      try (Connection conn = DriverManager.getConnection(dbURL, user, pass); 
+		    		  PreparedStatement stmt = conn.prepareStatement(sql)) {
+		  
+					stmt.setString(1, periodo_);
+					stmt.executeUpdate();
+		  
+					System.out.println("Se elimino correctamente!! ");
+					} catch (SQLException e) {
+					  e.printStackTrace();
+					}
+																	 }
+//=================================================================================================
 }
