@@ -19,6 +19,32 @@ import javax.swing.JFormattedTextField;
 public class SQLDatabaseConnection {
  
     public static void main(String[] args) throws SQLException {
+    	
+    	
+    	
+    	
+    	Connection conn = null;
+
+	       String dbURL = "jdbc:sqlserver://MUÑOZV";
+	       String user = "Brayan";
+	       String pass = "12345";
+	       conn = DriverManager.getConnection(dbURL, user, pass);
+	       if (conn != null) {
+	           System.out.println("Conexion establecida ");
+	       			      }
+	    String query = "Select PA.[Cod PeriodoAcad] as Periodo From  PeriodoAcademico PA";
+	    
+	    try (Statement stmt = conn.createStatement()) {
+	     ResultSet rs = stmt.executeQuery(query);
+	     while (rs.next()) {
+	       String periodo = rs.getString("Periodo");
+	    
+	       System.out.println(periodo);
+	    
+	     }
+	    
+	   } 
+    	
  
        // InsertarAsignatura("ITT348T", "Redes Telematicas II", 4, 3, 1);
        // InsertarEstudiante("20170843", "Jose", "Rafael", "Almonte", null, "ITT", "Contado", "DOM", null);

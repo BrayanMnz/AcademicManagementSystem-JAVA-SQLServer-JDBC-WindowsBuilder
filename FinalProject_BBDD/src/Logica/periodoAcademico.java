@@ -4,8 +4,10 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class periodoAcademico {
 	
@@ -181,4 +183,114 @@ public class periodoAcademico {
 					}
 																	 }
 //=================================================================================================
+	public static void DeletePerAcad (String PKperAcad) {
+		
+		String perAcad = PKperAcad;
+
+		
+		
+			  String dbURL = "jdbc:sqlserver://MUÑOZV";
+		      String user = "Brayan";
+		      String pass = "12345";
+		      
+		      
+		      String sql = "DELETE FROM PeriodoAcademico WHERE [Cod PeriodoAcad] = ?";
+		
+		      try (Connection conn = DriverManager.getConnection(dbURL, user, pass); 
+		    		  PreparedStatement stmt = conn.prepareStatement(sql)) {
+		  
+					stmt.setString(1, perAcad);
+					
+			
+					stmt.executeUpdate();
+		  
+					System.out.println("Se elimino correctamente!! ");
+					} catch (SQLException e) {
+					  e.printStackTrace();
+					} 
+	}
+
+
+	
+//=================================================================================================
+	public static void UpdatePeriodo (
+			String perAcad,
+			String descripcion,
+			java.sql.Date fechainicio,
+			java.sql.Date fechaFin,
+			java.sql.Date fechaInicioClases,
+			java.sql.Date fechaFinClases,
+			java.sql.Date fechaLimite,
+			java.sql.Date fechaLimitePrem,
+			java.sql.Date fechaLimiteRet,
+			java.sql.Date fechaLimitePub
+			
+			) 
+			{
+				
+				String per  = perAcad;
+				String desc = descripcion;
+				java.sql.Date fi   = fechainicio;
+				java.sql.Date ff   = fechaFin;
+				java.sql.Date fic  = fechaInicioClases;
+				java.sql.Date ffc  = fechaFinClases;
+				java.sql.Date fl   = fechaLimite;
+				java.sql.Date flp  = fechaLimitePrem;
+				java.sql.Date flr  = fechaLimiteRet;
+				java.sql.Date flpu = fechaLimitePub;
+			
+								
+				
+				Connection conn = null;
+				 
+			    try {
+
+			        String dbURL = "jdbc:sqlserver://MUÑOZV";
+			        String user = "Brayan";
+			        String pass = "12345";
+			        conn = DriverManager.getConnection(dbURL, user, pass);
+			        if (conn != null) {
+			            System.out.println("Conexion establecida ");
+			        			      }
+
+			        try (Statement stmt = conn.createStatement()) {
+			        	
+
+			            PreparedStatement prepStmt = conn.prepareStatement(
+			            		"UPDATE PeriodoAcademico SET descripcion = ?,FechaInicio = ?, FechaFin = ?, fechaInicioClases =?,fechaFinClases=?,fechaLimitePago=?, fechaLimitePrematricula = ?,fechaLimiteRetiro =?,fechaLimitePublicacion =? WHERE  [Cod PeriodoAcad] = ? ");
+
+			            prepStmt.setString(10, per); 
+			            prepStmt.setString(1, desc);
+			            prepStmt.setDate(2, fi); 
+			            prepStmt.setDate(3, ff);
+			            prepStmt.setDate(4, fic); 
+			            prepStmt.setDate(5, ffc); 
+			            prepStmt.setDate(6, fl);
+			            prepStmt.setDate(7, flp); 
+			            prepStmt.setDate(8, flr); 
+			            prepStmt.setDate(9, flpu); 
+			            
+			            prepStmt.executeUpdate();
+			            prepStmt.close();
+			            
+			        } catch (SQLException e) {
+			          e.printStackTrace();
+			        }        
+
+			    } catch (SQLException ex) {
+			        ex.printStackTrace();
+			    } finally {
+			        try {
+			            if (conn != null && !conn.isClosed()) {
+			                conn.close();
+			            }
+			        } catch (SQLException ex) {
+			            ex.printStackTrace();
+			        }
+			    }
+				 }
+
+//=================================================================================================	
+	
+	
 }

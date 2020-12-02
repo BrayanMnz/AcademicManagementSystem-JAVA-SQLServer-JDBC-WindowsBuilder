@@ -1,5 +1,11 @@
 package Logica;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 public class Inscripcion {
 
 	private String codPeriodoAcad;
@@ -45,5 +51,62 @@ public class Inscripcion {
 	public void setNumGrupo(String numGrupo) {
 		this.numGrupo = numGrupo;
 	}
+	
+
+public static void InsertarInscripcion (
+		String perAcad,
+		String codAsig,
+		String numGrupo,
+		String matricula
+		)     
+		{
+			
+			Connection conn = null;
+			 
+		    try {
+
+		        String dbURL = "jdbc:sqlserver://MUÑOZV";
+		        String user = "Brayan";
+		        String pass = "12345";
+		        conn = DriverManager.getConnection(dbURL, user, pass);
+		        if (conn != null) {
+		            System.out.println("Conexion establecida ");
+		        			      }
+
+		        try (Statement stmt = conn.createStatement()) {
+		        	
+		       
+		            String sqlQuery = " INSERT INTO Inscripcion ([Cod PeriodoAcad],Matricula,[Cod Asignatura],NumGrupo)"
+		                    + " VALUES(?, ?, ?, ?)";
+		            PreparedStatement prepStmt = conn.prepareStatement(sqlQuery);
+		            prepStmt.setString(1, perAcad); 
+		            prepStmt.setString(2, matricula);
+		            prepStmt.setString(3, codAsig); 
+		            prepStmt.setString(4, numGrupo);
+		         
+		        
+		            prepStmt.executeUpdate();
+		            prepStmt.close();
+		        	
+		        } catch (SQLException e) {
+		          e.printStackTrace();
+		        }        
+
+		    } catch (SQLException ex) {
+		        ex.printStackTrace();
+		    } finally {
+		        try {
+		            if (conn != null && !conn.isClosed()) {
+		                conn.close();
+		            }
+		        } catch (SQLException ex) {
+		            ex.printStackTrace();
+		        }
+		    }
+			 }
+	
+	
+	
+	
 }
 

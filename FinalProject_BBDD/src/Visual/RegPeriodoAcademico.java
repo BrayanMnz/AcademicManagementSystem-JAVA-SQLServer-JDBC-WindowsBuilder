@@ -25,9 +25,12 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import javax.swing.JTextField;
 import javax.swing.JFormattedTextField;
@@ -42,6 +45,8 @@ import java.awt.event.WindowEvent;
 import java.lang.ref.Cleaner.Cleanable;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class RegPeriodoAcademico extends JDialog {
 
@@ -61,6 +66,9 @@ public class RegPeriodoAcademico extends JDialog {
 	JFormattedTextField ftxtLimitePago;
 	JFormattedTextField ftxtLimitePublicacion;
 	private JTable tblPeriodosAcademicos;
+	private String auxPeriodo;
+	
+	private int index;
 	
 	private static DefaultTableModel model; 
 	private static Object[] fila;
@@ -82,6 +90,7 @@ public class RegPeriodoAcademico extends JDialog {
 	 * Create the dialog.
 	 */
 	public RegPeriodoAcademico() {
+		setResizable(false);
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowOpened(WindowEvent e) {
@@ -257,6 +266,7 @@ public class RegPeriodoAcademico extends JDialog {
 		panel.add(btnInsertar);
 		
 		JButton btnEliminar = new JButton("Eliminar");
+		btnEliminar.setEnabled(false);
 		btnEliminar.setFont(new Font("Tahoma", Font.PLAIN, 9));
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -270,6 +280,19 @@ public class RegPeriodoAcademico extends JDialog {
 		panel.add(btnEliminar);
 		
 		JButton btnModificar = new JButton("Modificar");
+		btnModificar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				periodoAcademico.UpdatePeriodo(txtPerAcad.getText(), txtDescripcion.getText(), Date.valueOf(ftxtInicioPeriodo.getText()),Date.valueOf(ftxtFinPeriodo.getText()),
+			    		Date.valueOf(ftxtInicioClases.getText()), Date.valueOf(ftxtFinClases.getText()),Date.valueOf(ftxtLimitePago.getText()),
+			    		Date.valueOf(ftxtLimitePrem.getText()),Date.valueOf(ftxtLimiteRetiro.getText()), Date.valueOf(ftxtLimitePublicacion.getText()));
+					JOptionPane.showMessageDialog(null, "Se ha modificado correctamente! ", "Notificacion", JOptionPane.INFORMATION_MESSAGE);
+					cargarPeriodos();
+					clean();
+				
+			}
+		});
+		btnModificar.setEnabled(false);
 		btnModificar.setFont(new Font("Tahoma", Font.PLAIN, 9));
 		btnModificar.setBounds(91, 127, 82, 103);
 		panel.add(btnModificar);
@@ -284,13 +307,58 @@ public class RegPeriodoAcademico extends JDialog {
 		panel_1.add(scrollPane, BorderLayout.CENTER);
 		
 		tblPeriodosAcademicos = new JTable();
+		tblPeriodosAcademicos.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				index = tblPeriodosAcademicos.getSelectedRow();
+				if(index >= 0) { 
+				    auxPeriodo = (String)tblPeriodosAcademicos.getModel().getValueAt(index, 0).toString();
+				    
+				    try {
+						ArrayList<String> aux = buscarPorPeriodo(auxPeriodo);
+						txtPerAcad.setText(aux.get(0));
+						txtDescripcion.setText(aux.get(1));
+						ftxtInicioPeriodo.setText(aux.get(2));
+						ftxtFinPeriodo.setText(aux.get(3));
+						ftxtInicioClases.setText(aux.get(4));
+						ftxtFinClases.setText(aux.get(5));
+						ftxtLimitePago.setText(aux.get(6));
+						ftxtLimitePrem.setText(aux.get(7));
+						ftxtLimiteRetiro.setText(aux.get(8));
+						ftxtLimitePublicacion.setText(aux.get(9));
+
+						
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				 
+				    btnModificar.setEnabled(true);
+				    btnEliminar.setEnabled(true);
+				    btnInsertar.setEnabled(false);
+				    txtPerAcad.setEditable(false);
+				    
+				}
+				
+			}
+		});
 		scrollPane.setViewportView(tblPeriodosAcademicos);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("OK");
+				JButton okButton = new JButton("Insertar nuevo");
+				okButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						clean();
+						btnInsertar.setEnabled(true);
+						btnModificar.setEnabled(false);
+						btnEliminar.setEnabled(false);
+						
+					}
+				});
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
@@ -360,6 +428,57 @@ private void cargarPeriodos() {
 	    }
 	    
 	}
+
+public static  ArrayList<String> buscarPorPeriodo(String periodo) throws SQLException 
+{
+ArrayList<String> ret = new ArrayList<String>();
+String periodo_ = periodo;
+
+	Connection conn = null;
+
+        String dbURL = "jdbc:sqlserver://MUÑOZV";
+        String user = "Brayan";
+        String pass = "12345";
+        conn = DriverManager.getConnection(dbURL, user, pass);
+        if (conn != null) {
+            System.out.println("Conexion establecida ");
+        			      }
+     String query = "select * FROM PeriodoAcademico WHERE [Cod PeriodoAcad] = ".concat(periodo_);
+    try (Statement stmt = conn.createStatement()) {
+      ResultSet rs = stmt.executeQuery(query);
+      while (rs.next()) {
+        String Periodo = rs.getString("Cod PeriodoAcad");
+        String Descripcion    = rs.getString("Descripcion");
+        String Inicio    = rs.getString("FechaInicio");
+        String Fin  = rs.getString("FechaFin");
+        String InicioClases  = rs.getString("FechaInicioClases");
+        
+        String FinClases    = rs.getString("FechaFinClases");
+        String Pago  = rs.getString("FechaLimitePago");
+        String  Prematricula  = rs.getString("FechaLimitePrematricula");
+        String Retiro  = rs.getString("FechaLimiteRetiro");
+        String Publicacion  = rs.getString("FechaLimitePublicacion"); 
+     
+        ret.add(Periodo);
+     ret.add(Descripcion);
+     ret.add(Inicio);
+     ret.add(Fin);
+     ret.add(InicioClases);
+     ret.add(FinClases);
+     ret.add(Pago);
+     ret.add(Prematricula);
+     ret.add(Retiro);
+     ret.add(Publicacion);
+     
+      }
+    } 
+
+
+
+return ret;
+
+}
+
 
 private void clean() {
 	txtPerAcad.setText("");
