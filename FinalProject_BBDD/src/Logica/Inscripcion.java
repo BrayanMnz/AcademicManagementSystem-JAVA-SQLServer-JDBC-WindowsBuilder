@@ -106,7 +106,34 @@ public static void InsertarInscripcion (
 			 }
 	
 	
+//============================================================================		
+public static void DeleteInscripcion (String Periodo, String Asignatura, String Grupo, String Matricula ) {
 	
+	
+	
+	
+		  String dbURL = "jdbc:sqlserver://MUÑOZV";
+	      String user = "Brayan";
+	      String pass = "12345";
+	      
+	      
+	      String sql = "DELETE FROM Inscripcion WHERE Matricula = ? AND [Cod PeriodoAcad] = ? AND [Cod Asignatura] = ? AND NumGrupo = ?";
+	
+	      try (Connection conn = DriverManager.getConnection(dbURL, user, pass); 
+	    		  PreparedStatement stmt = conn.prepareStatement(sql)) {
+	  
+				stmt.setString(1, Matricula);
+				stmt.setString(2, Periodo);
+				stmt.setString(3, Asignatura);
+				stmt.setString(4, Grupo);
+				stmt.executeUpdate();
+	  
+				System.out.println("Se elimino correctamente!! ");
+				} catch (SQLException e) {
+				  e.printStackTrace();
+				}
+																 }
+//=================================================================================================
 	
 }
 

@@ -286,7 +286,7 @@ public class RegInscripcion extends JDialog {
 						
 						Inscripcion.InsertarInscripcion(cbxPerAcad.getSelectedItem().toString(), cbxCodA.getSelectedItem().toString(), cbxNumGrupo.getSelectedItem().toString(), cbxMatricula.getSelectedItem().toString());
 						JOptionPane.showMessageDialog(null, "Grupo Inscrito !  ", "Notificacion", JOptionPane.INFORMATION_MESSAGE);
-						
+						cbxNumGrupo.setEnabled(false);
 					}
 				});
 				btnInscribir.setActionCommand("OK");

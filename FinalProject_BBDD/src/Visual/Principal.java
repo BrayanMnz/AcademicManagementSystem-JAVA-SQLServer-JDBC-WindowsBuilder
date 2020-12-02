@@ -50,6 +50,11 @@ public class Principal extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton okButton = new JButton("OK");
+				okButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						dispose();
+					}
+				});
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
@@ -119,6 +124,48 @@ public class Principal extends JDialog {
 						}
 					});
 					mnAsignatura.add(mntmListarAsignatura);
+				}
+			}
+			{
+				JMenu mnPeriodos = new JMenu("Periodos");
+				menuBar.add(mnPeriodos);
+				{
+					JMenuItem mntmManejoPeriodos = new JMenuItem("Manejo de Periodos Academicos");
+					mntmManejoPeriodos.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							RegPeriodoAcademico p1 = new RegPeriodoAcademico();
+							p1.setModal(true);
+							p1.setVisible(true);
+						}
+					});
+					mnPeriodos.add(mntmManejoPeriodos);
+				}
+			}
+			{
+				JMenu mnInscripcion = new JMenu("Inscripcion");
+				menuBar.add(mnInscripcion);
+				{
+					JMenuItem mntmRegInscripcion = new JMenuItem("Registrar Inscripcion");
+					mntmRegInscripcion.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							RegInscripcion I1 = new RegInscripcion();
+							I1.setModal(true);
+							I1.setVisible(true);
+						}
+					});
+					mnInscripcion.add(mntmRegInscripcion);
+				}
+				{
+					JMenuItem mntmListarInscripcion = new JMenuItem("Ver Inscripciones");
+					mntmListarInscripcion.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							VerInscripciones V1 = new VerInscripciones();
+							V1.setModal(true);
+							V1.setVisible(true);
+							
+						}
+					});
+					mnInscripcion.add(mntmListarInscripcion);
 				}
 			}
 		}

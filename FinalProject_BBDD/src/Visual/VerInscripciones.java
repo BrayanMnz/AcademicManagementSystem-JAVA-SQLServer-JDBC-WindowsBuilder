@@ -7,6 +7,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -14,15 +17,27 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+
+import Logica.Inscripcion;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class VerInscripciones extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JTable tblInscripciones;
+	private String auxAsignatura;
+	private String auxPeriodo;
+	private String auxGrupo;
+	private String auxMatricula;
+	private int index;
 
 	/**
 	 * Launch the application.
@@ -59,6 +74,23 @@ public class VerInscripciones extends JDialog {
 			contentPanel.add(scrollPane, BorderLayout.CENTER);
 			{
 				tblInscripciones = new JTable();
+				tblInscripciones.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						index = tblInscripciones.getSelectedRow();
+						if(index >= 0) { 
+						    auxPeriodo = (String)tblInscripciones.getModel().getValueAt(index, 0).toString();
+						    auxMatricula = (String)tblInscripciones.getModel().getValueAt(index, 1).toString();
+						    auxAsignatura = (String)tblInscripciones.getModel().getValueAt(index, 2).toString();
+						    auxGrupo = (String)tblInscripciones.getModel().getValueAt(index, 3).toString();
+						    
+						    
+						   
+						   
+						   
+						}
+					}
+				});
 				scrollPane.setViewportView(tblInscripciones);
 			}
 		}
@@ -67,13 +99,26 @@ public class VerInscripciones extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("OK");
-				okButton.setActionCommand("OK");
-				buttonPane.add(okButton);
-				getRootPane().setDefaultButton(okButton);
+				JButton btnEliminar = new JButton("Eliminar");
+				btnEliminar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						Inscripcion.DeleteInscripcion(auxPeriodo, auxAsignatura, auxGrupo, auxMatricula);
+						JOptionPane.showMessageDialog(null, "Grupo eliminado de inscripcion!  ", "Notificacion", JOptionPane.INFORMATION_MESSAGE);
+						
+						cargarInscripciones();
+					}
+				});
+				btnEliminar.setActionCommand("OK");
+				buttonPane.add(btnEliminar);
+				getRootPane().setDefaultButton(btnEliminar);
 			}
 			{
-				JButton cancelButton = new JButton("Cancel");
+				JButton cancelButton = new JButton("Salir");
+				cancelButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						dispose();
+					}
+				});
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 			}
@@ -136,6 +181,6 @@ private void cargarInscripciones() {
 	    }
 	}
 	
-	
+
 	
 }
