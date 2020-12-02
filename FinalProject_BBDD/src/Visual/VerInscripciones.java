@@ -22,6 +22,7 @@ import java.awt.event.WindowEvent;
 public class VerInscripciones extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
+	private JTable tblInscripciones;
 
 	/**
 	 * Launch the application.
@@ -56,6 +57,10 @@ public class VerInscripciones extends JDialog {
 		{
 			JScrollPane scrollPane = new JScrollPane();
 			contentPanel.add(scrollPane, BorderLayout.CENTER);
+			{
+				tblInscripciones = new JTable();
+				scrollPane.setViewportView(tblInscripciones);
+			}
 		}
 		{
 			JPanel buttonPane = new JPanel();
