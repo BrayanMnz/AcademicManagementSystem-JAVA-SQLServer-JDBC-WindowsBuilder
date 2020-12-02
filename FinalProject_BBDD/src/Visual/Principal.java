@@ -12,6 +12,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+import java.awt.Font;
 
 public class Principal extends JDialog {
 
@@ -34,6 +37,7 @@ public class Principal extends JDialog {
 	 * Create the dialog.
 	 */
 	public Principal() {
+		setTitle("Enjoy the journey");
 		setResizable(false);
 		setBounds(100, 100, 650, 450);
 		getContentPane().setLayout(new BorderLayout());
@@ -43,6 +47,14 @@ public class Principal extends JDialog {
 		{
 			JPanel panel = new JPanel();
 			contentPanel.add(panel, BorderLayout.CENTER);
+			panel.setLayout(null);
+			{
+				JLabel lblNewLabel = new JLabel("Simplicidad es genialidad. - A. Einstein");
+				lblNewLabel.setFont(new Font("Courier New", Font.BOLD | Font.ITALIC, 21));
+				lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+				lblNewLabel.setBounds(10, 73, 614, 217);
+				panel.add(lblNewLabel);
+			}
 		}
 		{
 			JPanel buttonPane = new JPanel();
@@ -166,6 +178,21 @@ public class Principal extends JDialog {
 						}
 					});
 					mnInscripcion.add(mntmListarInscripcion);
+				}
+			}
+			{
+				JMenu mnNewMenu = new JMenu("Informe Inscripcioness");
+				menuBar.add(mnNewMenu);
+				{
+					JMenuItem mntmNewMenuItem = new JMenuItem("Ver Informes");
+					mntmNewMenuItem.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							InformeInscripcion b1 = new InformeInscripcion();
+							b1.setVisible(true);
+							b1.setModal(true);
+						}
+					});
+					mnNewMenu.add(mntmNewMenuItem);
 				}
 			}
 		}

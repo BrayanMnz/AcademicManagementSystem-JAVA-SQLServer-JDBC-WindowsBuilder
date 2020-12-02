@@ -11,6 +11,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import Logica.Asignatura;
+import Logica.Grupo;
 
 import javax.swing.border.BevelBorder;
 import java.awt.Color;
@@ -223,6 +224,7 @@ public class ListarAsignaturas extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 			
 			Asignatura.DeleteAsignatura(txtCodAsignatura.getText());
+			//Grupo.DeleteGrupo(PKperAcad, PKcodAsig, PKnumGrupo);
 			JOptionPane.showMessageDialog(null, "Se elimino correctamente!! ", "Notificacion", JOptionPane.INFORMATION_MESSAGE);
 			CargarAsignaturas();
 			Clean();

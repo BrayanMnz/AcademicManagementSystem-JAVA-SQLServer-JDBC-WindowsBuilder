@@ -155,13 +155,13 @@ public class Grupo {
 			        	
 
 			            PreparedStatement ps = conn.prepareStatement(
-			            		"UPDATE Grupo SET CupoGrupo = ?,Horario = ? WHERE  CodPeriodoAcad = ? AND [Cod Asignatura ] = ? AND NumGrupo = ?");
+			            		"UPDATE Grupo SET CupoGrupo = ? WHERE  CodPeriodoAcad = ? AND [Cod Asignatura ] = ? AND NumGrupo = ?");
 
-			            ps.setString(3,perAcad_);
-			            ps.setString(4,codAsig_);
-			            ps.setString(5,numGrupo_);
+			            ps.setString(2,perAcad_);
+			            ps.setString(3,codAsig_);
+			            ps.setString(4,numGrupo_);
 			            ps.setInt(1,cupoGrupo_);
-			            ps.setString(2, Horario_);
+			          
 
 			            ps.executeUpdate();
 			            ps.close();

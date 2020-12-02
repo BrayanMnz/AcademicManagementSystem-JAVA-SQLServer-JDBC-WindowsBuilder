@@ -55,6 +55,7 @@ public class RegGrupo extends JDialog {
 	JButton btnHorarioGrupo;
 	JButton btnInsertar;
 	JButton btnModificar;
+	JButton btnEliminar;
 
 	private int index;
 	
@@ -255,8 +256,10 @@ public class RegGrupo extends JDialog {
 									txtNumGrupo.setText(aux.get(2));
 									txtCupoGrupo.setText(aux.get(3));
 									btnHorarioGrupo.setEnabled(true);
+								
 									btnInsertar.setEnabled(false);
 									btnModificar.setEnabled(true);
+									btnEliminar.setEnabled(true);
 									
 									
 									
@@ -271,7 +274,8 @@ public class RegGrupo extends JDialog {
 							    txtPerAcad.setEditable(false);
 							    txtCodAsignatura.setEditable(false);
 							    txtNumGrupo.setEditable(false);
-							    txtCupoGrupo.setEditable(false);
+							  
+							  
 							
 							   
 							}
@@ -291,6 +295,31 @@ public class RegGrupo extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				btnModificar = new JButton("Modificar");
+				btnModificar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						Grupo.UpdateGrupo(txtPerAcad.getText(), txtCodAsignatura.getText(), txtNumGrupo.getText(), Integer.parseInt(txtCupoGrupo.getText()), "");
+						cargarGrupos();
+						Clean();
+					
+					}
+				});
+				{
+				    btnEliminar = new JButton("Eliminar");
+					btnEliminar.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							
+							DeleteGrupoHorario(txtPerAcad.getText(), txtCodAsignatura.getText(), txtNumGrupo.getText());
+							
+							Grupo.DeleteGrupo(txtPerAcad.getText(), txtCodAsignatura.getText(), txtNumGrupo.getText());
+							
+							JOptionPane.showMessageDialog(null, "Grupo Eliminado !  ", "Notificacion", JOptionPane.INFORMATION_MESSAGE);
+							cargarGrupos();
+							
+						}
+					});
+					btnEliminar.setEnabled(false);
+					buttonPane.add(btnEliminar);
+				}
 				btnModificar.setEnabled(false);
 				btnModificar.setActionCommand("OK");
 				buttonPane.add(btnModificar);
@@ -454,4 +483,41 @@ private ArrayList<String> buscarGrupoHorario1(String auxPer, String auxAsig, Str
 
 	return ret;
 }
+
+
+private static void DeleteGrupoHorario (String PKperAcad,
+		String PKcodAsig, 
+		String PKnumGrupo) {
+	
+	String perAcad = PKperAcad;
+	String codAsig = PKcodAsig; 
+	String numGrupo = PKnumGrupo;
+	
+	
+		  String dbURL = "jdbc:sqlserver://MUÑOZV";
+	      String user = "Brayan";
+	      String pass = "12345";
+	      
+	      
+	      String sql = "DELETE FROM GrupoHorario WHERE CodAsignatura = ? AND CodPeriodoAcad = ? AND NumGrupo = ?";
+	
+	      try (Connection conn = DriverManager.getConnection(dbURL, user, pass); 
+	    		  PreparedStatement stmt = conn.prepareStatement(sql)) {
+	  
+				stmt.setString(1, codAsig);
+				stmt.setString(2, perAcad);
+				stmt.setString(3, numGrupo);
+		
+				stmt.executeUpdate();
+	  
+				System.out.println("Se elimino correctamente!! ");
+				} catch (SQLException e) {
+				  e.printStackTrace();
+				}
+																 }		
+
+//============================================================================	
+
+
+
 }
